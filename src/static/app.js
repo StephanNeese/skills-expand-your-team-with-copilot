@@ -568,6 +568,9 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
+        <button class="share-button" data-activity="${name}" title="Share this activity">
+          📤 Share
+        </button>
       </div>
     `;
 
@@ -586,6 +589,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handler for share button
+    const shareButton = activityCard.querySelector(".share-button");
+    shareButton.addEventListener("click", () => {
+      openShareModal(name, details);
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -797,6 +806,155 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     );
+  }
+
+  // Function to create share text for an activity
+  function createShareText(activityName, details) {
+    const formattedSchedule = formatSchedule(details);
+    return `Check out this activity at Mergington High School: ${activityName}! ${details.description} Schedule: ${formattedSchedule}`;
+  }
+
+  // Store current share data
+  let currentShareData = { activityName: "", details: null };
+
+  // Function to create share modal (called once)
+  function createShareModal() {
+    const shareModal = document.createElement("div");
+    shareModal.id = "share-modal";
+    shareModal.className = "modal hidden";
+    shareModal.innerHTML = `
+      <div class="modal-content">
+        <span class="close-share-modal">&times;</span>
+        <h3>Share Activity</h3>
+        <div id="share-activity-info"></div>
+        <div class="share-buttons-container">
+          <button class="social-share-button twitter-share" id="twitter-share">
+            <span class="share-icon">🐦</span>
+            <span>Share on Twitter</span>
+          </button>
+          <button class="social-share-button facebook-share" id="facebook-share">
+            <span class="share-icon">📘</span>
+            <span>Share on Facebook</span>
+          </button>
+          <button class="social-share-button email-share" id="email-share">
+            <span class="share-icon">✉️</span>
+            <span>Share via Email</span>
+          </button>
+          <button class="social-share-button copy-link" id="copy-link">
+            <span class="share-icon">🔗</span>
+            <span>Copy Link</span>
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(shareModal);
+
+    // Add close handler
+    const closeShareModal = shareModal.querySelector(".close-share-modal");
+    closeShareModal.addEventListener("click", () => {
+      shareModal.classList.remove("show");
+      setTimeout(() => {
+        shareModal.classList.add("hidden");
+      }, 300);
+    });
+
+    // Close when clicking outside - add once
+    shareModal.addEventListener("click", (event) => {
+      if (event.target === shareModal) {
+        shareModal.classList.remove("show");
+        setTimeout(() => {
+          shareModal.classList.add("hidden");
+        }, 300);
+      }
+    });
+
+    // Add event listeners for share buttons - add once
+    document.getElementById("twitter-share").addEventListener("click", () => {
+      const shareText = createShareText(currentShareData.activityName, currentShareData.details);
+      const shareUrl = createShareUrl(currentShareData.activityName);
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        shareText
+      )}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(twitterUrl, "_blank", "width=550,height=420");
+    });
+
+    document.getElementById("facebook-share").addEventListener("click", () => {
+      const shareUrl = createShareUrl(currentShareData.activityName);
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        shareUrl
+      )}`;
+      window.open(facebookUrl, "_blank", "width=550,height=420");
+    });
+
+    document.getElementById("email-share").addEventListener("click", () => {
+      const shareText = createShareText(currentShareData.activityName, currentShareData.details);
+      const shareUrl = createShareUrl(currentShareData.activityName);
+      const subject = `Check out this activity: ${currentShareData.activityName}`;
+      const body = `${shareText}\n\nLearn more: ${shareUrl}`;
+      const mailtoUrl = `mailto:?subject=${encodeURIComponent(
+        subject
+      )}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailtoUrl;
+    });
+
+    document.getElementById("copy-link").addEventListener("click", async () => {
+      const shareUrl = createShareUrl(currentShareData.activityName);
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        showMessage("Link copied to clipboard!", "success");
+      } catch (error) {
+        // Fallback for older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand("copy");
+          showMessage("Link copied to clipboard!", "success");
+        } catch (err) {
+          showMessage("Failed to copy link", "error");
+        }
+        document.body.removeChild(textArea);
+      }
+    });
+
+    return shareModal;
+  }
+
+  // Function to create share URL with proper parameter handling
+  function createShareUrl(activityName) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("activity", activityName);
+    return url.toString();
+  }
+
+  // Function to open share modal
+  function openShareModal(activityName, details) {
+    // Store current activity data
+    currentShareData = { activityName, details };
+
+    // Get or create modal
+    let shareModal = document.getElementById("share-modal");
+    if (!shareModal) {
+      shareModal = createShareModal();
+    }
+
+    // Update the activity info
+    const shareActivityInfo = document.getElementById("share-activity-info");
+    const formattedSchedule = formatSchedule(details);
+    shareActivityInfo.innerHTML = `
+      <p><strong>${activityName}</strong></p>
+      <p class="share-description">${details.description}</p>
+      <p class="share-schedule"><strong>Schedule:</strong> ${formattedSchedule}</p>
+    `;
+
+    // Show modal
+    shareModal.classList.remove("hidden");
+    setTimeout(() => {
+      shareModal.classList.add("show");
+    }, 10);
   }
 
   // Show message function
