@@ -217,6 +217,10 @@ section h3 {
   text-transform: uppercase;
   letter-spacing: 0.3px;
   border: 1px solid;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .difficulty-beginner {
