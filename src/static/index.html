@@ -104,6 +104,7 @@
             <div class="filter-container difficulty-filter-container">
               <div class="filter-label">Filter by difficulty:</div>
               <div class="difficulty-filters" id="difficulty-filters">
+                <!-- Empty string = show all activities (no filtering) -->
                 <button class="difficulty-filter" data-difficulty="">
                   All Levels
                 </button>
@@ -116,6 +117,7 @@
                 <button class="difficulty-filter" data-difficulty="Advanced">
                   Advanced
                 </button>
+                <!-- "All" = show only activities with no difficulty level specified -->
                 <button class="difficulty-filter" data-difficulty="All">
                   Unspecified
                 </button>

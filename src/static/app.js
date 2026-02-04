@@ -401,6 +401,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Handle difficulty filter
+      // Note: Empty string "" means "All Levels" (no filtering) in frontend
+      // The value "All" is sent to backend to mean "only unspecified difficulty" activities
       if (currentDifficulty) {
         queryParams.push(`difficulty_level=${encodeURIComponent(currentDifficulty)}`);
       }
