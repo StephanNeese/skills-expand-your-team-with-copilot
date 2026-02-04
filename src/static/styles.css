@@ -34,10 +34,10 @@
 
 /* Dark mode color palette */
 body.dark-mode {
-  /* Primary colors - adjusted for dark mode */
-  --primary: #534bae;
-  --primary-light: #7e57c2;
-  --primary-dark: #311b92;
+  /* Primary colors - adjusted for dark mode with better contrast */
+  --primary: #7e57c2;
+  --primary-light: #9575cd;
+  --primary-dark: #5e35b1;
   --primary-text: #ffffff;
 
   /* Secondary colors - adjusted for dark mode */

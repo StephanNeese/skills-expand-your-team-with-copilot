@@ -1,36 +1,39 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Dark mode functionality
   const darkModeToggle = document.getElementById("dark-mode-toggle");
-  const toggleIcon = darkModeToggle.querySelector(".toggle-icon");
+  
+  if (darkModeToggle) {
+    const toggleIcon = darkModeToggle.querySelector(".toggle-icon");
 
-  // Check for saved dark mode preference
-  function initializeDarkMode() {
-    const savedMode = localStorage.getItem("darkMode");
-    if (savedMode === "enabled") {
-      document.body.classList.add("dark-mode");
-      toggleIcon.textContent = "☀️";
-    } else {
-      toggleIcon.textContent = "🌙";
+    // Check for saved dark mode preference
+    function initializeDarkMode() {
+      const savedMode = localStorage.getItem("darkMode");
+      if (savedMode === "enabled") {
+        document.body.classList.add("dark-mode");
+        if (toggleIcon) toggleIcon.textContent = "☀️";
+      } else {
+        if (toggleIcon) toggleIcon.textContent = "🌙";
+      }
     }
-  }
 
-  // Toggle dark mode
-  function toggleDarkMode() {
-    const isDarkMode = document.body.classList.toggle("dark-mode");
-    if (isDarkMode) {
-      localStorage.setItem("darkMode", "enabled");
-      toggleIcon.textContent = "☀️";
-    } else {
-      localStorage.setItem("darkMode", "disabled");
-      toggleIcon.textContent = "🌙";
+    // Toggle dark mode
+    function toggleDarkMode() {
+      const isDarkMode = document.body.classList.toggle("dark-mode");
+      if (isDarkMode) {
+        localStorage.setItem("darkMode", "enabled");
+        if (toggleIcon) toggleIcon.textContent = "☀️";
+      } else {
+        localStorage.setItem("darkMode", "disabled");
+        if (toggleIcon) toggleIcon.textContent = "🌙";
+      }
     }
+
+    // Event listener for dark mode toggle
+    darkModeToggle.addEventListener("click", toggleDarkMode);
+
+    // Initialize dark mode on page load
+    initializeDarkMode();
   }
-
-  // Event listener for dark mode toggle
-  darkModeToggle.addEventListener("click", toggleDarkMode);
-
-  // Initialize dark mode on page load
-  initializeDarkMode();
 
   // DOM elements
   const activitiesList = document.getElementById("activities-list");
